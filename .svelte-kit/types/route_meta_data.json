@@ -1,0 +1,8 @@
+{
+	"/": [],
+	"/Authentication": [
+		"src/routes/Authentication/+server.ts"
+	],
+	"/BTCPAGE": [],
+	"/ETHPAGE": []
+}
