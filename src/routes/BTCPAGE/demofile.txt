@@ -1,0 +1,59 @@
+1. Install a charting library
+npm install chart.js svelte-chartjs
+
+
+2. Create RawState Store
+// src/lib/stores/cryptoPrice.ts
+import { raw } from 'rawstate';
+
+export const cryptoPrice = raw({ time: [], price: [] });
+
+3. Fetch and Update Data (via API)
+// src/lib/api/fetchPrice.ts
+export async function fetchCryptoPrice(coinId: string = "bitcoin") {
+	const res = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${coinId}&vs_currencies=usd`);
+	const data = await res.json();
+	return data[coinId].usd;
+}
+
+4. Add Real-Time Component
+<!-- src/lib/Components/CryptoChart.svelte -->
+<script lang="ts">
+	import { onMount } from "svelte";
+	import { cryptoPrice } from "$lib/stores/cryptoPrice";
+	import { fetchCryptoPrice } from "$lib/api/fetchPrice";
+
+	let interval;
+
+	onMount(() => {
+		interval = setInterval(async () => {
+			const price = await fetchCryptoPrice("bitcoin");
+			const now = new Date().toLocaleTimeString();
+
+			cryptoPrice.update((prev) => ({
+				time: [...prev.time, now].slice(-20),
+				price: [...prev.price, price].slice(-20),
+			}));
+		}, 3000); // every 3 seconds
+
+		return () => clearInterval(interval);
+	});
+</script>
+
+<!-- Minimal display -->
+<div>
+	<h3>Real-Time Bitcoin Price</h3>
+	<ul>
+		{#each $cryptoPrice.price as p, i}
+			<li>{ $cryptoPrice.time[i] }: ${p}</li>
+		{/each}
+	</ul>
+</div>
+
+5. Use the Component
+<script>
+	import CryptoChart from "$lib/Components/CryptoChart.svelte";
+</script>
+
+<!-- Inside main or content area -->
+<CryptoChart />
