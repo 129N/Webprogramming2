@@ -23,6 +23,9 @@ function handleSelection(option: 'Crypt' | 'Portfolio' | 'Home') {
     else if(option==='Portfolio')goto('/ETHPAGE');
     else if(option==='Home')goto('/');
   }
+
+
+
 </script>
 
 

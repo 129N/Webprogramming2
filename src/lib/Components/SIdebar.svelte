@@ -1,16 +1,22 @@
 <script lang="ts">
     import Icon from  '@iconify/svelte';
+    import { goto } from '$app/navigation';
     export let open = false;
   
     
     const menuItems = [
-        { name: "Home", icon:  "mdi:home" },
-        { name: "Cryptocurrency Details Page",  icon: "mdi:bitcoin"},
-        { name: "Portfolio Page", icon:"mdi:finance" },
-        { name: "News", icon:  "mdi:newspaper" },
-        { name: "Currencies", icon:  "mdi:currency-usd" }
+        { name: "Home", icon:  "mdi:home",  path: "/"  },
+        { name: "Bitcoin Page",  icon: "mdi:bitcoin",  path: "/BTCPAGE" },
+        { name: "Eth Page", icon:"mdi:finance", path: "/ETHPAGE" },
+        { name: "News", icon:  "mdi:newspaper", path: "/"},
+        { name: "Currencies", icon:  "mdi:currency-usd", path: "/"}
     ];
 
+     // Navigation function
+     const navigate = (path: string) => {
+        goto(path);
+        open = false; // Close sidebar after navigation
+    };
 </script>
 
 
@@ -22,6 +28,14 @@
             <button on:click={() => open = false} class="sidebar-close">☰</button>
             {#each menuItems as item}
                 <li class="menu-item">
+
+                    <button 
+                    type="button" 
+                    class="menu-button"
+                    on:click={() => navigate(item.path)}
+                    on:keydown={(e) => e.key === 'Enter' && navigate(item.path)}
+                    >
+
                     <Icon icon={item.icon} class="Iconifies" />
                     <span class="text">{item.name}</span>
                 </li>
